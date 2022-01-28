@@ -648,6 +648,7 @@ cons(e => {
 	var oreicon = Core.atlas.find("pvpnotifs-orescan");
 	var votekick = Core.atlas.find("pvpnotifs-votekick");
 	var pipbuttonicon = Core.atlas.find("pvpnotifs-pipicon");
+	var reloadicon = Core.atlas.find("pvpnotifs-rangeammo")
 	
 	//Vars.indexer.getAllied(team, BlockFlag.generator).forEach((c)=>{});
 	
@@ -658,9 +659,9 @@ cons(e => {
 		t.row();
 		//prov(()=>{return "Power:"+Strings.fixed(powerBalance()*60.0,1)})
 		//prov(()=>{return Pal.health.cpy().lerp(Color.lime, Math.clamp(powerBalance()*0.25+0.5,0,1))})
-		var powbar= new Bar("Power",Pal.accent, floatp(()=>{return getBatLevel();}));
-		powbar.set(prov(()=>{return "Power: "+(powerBalance() >= 0 ? "+" : "") + Strings.fixed(powerBalance()*60.0,1)}),floatp(()=>{return getBatLevel();}),Pal.accent);
-		t.add(powbar).width(200).height(25).pad(4);
+		//var powbar= new Bar("Power",Pal.accent, floatp(()=>{return getBatLevel();}));
+		//powbar.set(prov(()=>{return "Power: "+(powerBalance() >= 0 ? "+" : "") + Strings.fixed(powerBalance()*60.0,1)}),floatp(()=>{return getBatLevel();}),Pal.accent);
+		//t.add(powbar).width(200).height(25).pad(4);
 	}
 	coreplus(Vars.ui.hudGroup.find(boolf(e=>{return e instanceof CoreItemsDisplay})));
 	
@@ -785,6 +786,10 @@ cons(e => {
 		t.button(new TextureRegionDrawable(votekick), style, run(()=>{
 			Call.sendChatMessage("/vote y");
 		})).width(46).height(46).name("ores").tooltip("vote y");
+		t.row();
+		t.button(new TextureRegionDrawable(reloadicon), togglestyle, run(()=>{
+			autoload=!autoload;
+		})).update(b => b.setChecked(autoload)).width(46).height(46).name("auto loading").tooltip("automatically drop items to constructed buildings");
 		
 		t.button(Icon.terminal, togglestyle, run(()=>{
 			if(playerAI){
@@ -928,6 +933,15 @@ var ignoreNoAmmo=false;
 var viewprogress= true;
 var orescan= false;
 var showpips = true;
+var autoload = false;
+var keepLoading = false;
+Events.on(BlockBuildEndEvent, e=>{if(autoload&&e.unit==Vars.player.unit()){loadTurret(e.tile.build)}})
+
+function loadTurret(turret){Timer.schedule(()=>{
+	if(turret.acceptItem(turret,Vars.player.unit().item())&&autoload){
+		Call.transferInventory(Vars.player,turret);
+}
+},0,4,20*keepLoading)};
 
 
 function eachIndexed(team,flag,cons){
