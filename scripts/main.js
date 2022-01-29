@@ -656,7 +656,7 @@ cons(e => {
 		if(!t){
 			return;
 		}
-		t.row();
+		//t.row();
 		//prov(()=>{return "Power:"+Strings.fixed(powerBalance()*60.0,1)})
 		//prov(()=>{return Pal.health.cpy().lerp(Color.lime, Math.clamp(powerBalance()*0.25+0.5,0,1))})
 		//var powbar= new Bar("Power",Pal.accent, floatp(()=>{return getBatLevel();}));
@@ -780,13 +780,19 @@ cons(e => {
 			showpips=!showpips;
 		})).update(b => b.setChecked(showpips)).width(46).height(46).name("light").tooltip("show pips");
 		t.row();
-		t.button(Icon.refresh, style, run(()=>{
-			Call.sendChatMessage("/sync");
-		})).width(46).height(46).name("ores").tooltip("sync");
-		t.button(new TextureRegionDrawable(votekick), style, run(()=>{
-			Call.sendChatMessage("/vote y");
-		})).width(46).height(46).name("ores").tooltip("vote y");
-		t.row();
+		
+		//t.button(Icon.refresh, style, run(()=>{
+		//	Call.sendChatMessage("/sync");
+		//})).width(46).height(46).name("ores").tooltip("sync");
+		
+		//t.button(new TextureRegionDrawable(votekick), style, run(()=>{
+		//	Call.sendChatMessage("/vote y");
+		//})).width(46).height(46).name("ores").tooltip("vote y");
+		
+		t.button(new TextureRegionDrawable(reloadicon), togglestyle, run(()=>{
+			keepLoading=!keepLoading;
+		})).update(b => b.setChecked(keepLoading)).width(46).height(46).name("keep loading").tooltip("remember turrets and load them repeatedly");
+
 		t.button(new TextureRegionDrawable(reloadicon), togglestyle, run(()=>{
 			autoload=!autoload;
 		})).update(b => b.setChecked(autoload)).width(46).height(46).name("auto loading").tooltip("automatically drop items to constructed buildings");
